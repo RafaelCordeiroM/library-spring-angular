@@ -1,13 +1,21 @@
-# Step 1: Build
+# === BUILD ===
 FROM maven:3.9.9-eclipse-temurin-17 AS build
 WORKDIR /app
+
+# Copia pom e baixa dependências (cache)
 COPY pom.xml .
+RUN mvn dependency:go-offline
+
+# Copia código e compila
 COPY src ./src
 RUN mvn clean package -DskipTests
 
-# Step 2: Run
+# === RUN ===
 FROM eclipse-temurin:17-jre
 WORKDIR /app
-COPY --from=build /app/target/backend-0.0.1-SNAPSHOT.jar app.jar
+
+# Copia QUALQUER JAR gerado (não importa o nome exato)
+COPY --from=build /app/target/*.jar app.jar
+
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]

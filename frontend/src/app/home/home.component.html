@@ -1,5 +1,15 @@
-<p>
-    testhg!
+<div>
+    {{title}}
+    <br />
     {{count}}
     <button (click)="onButtonClick()">aumenta</button>
-</p>
+    <br />
+    <input 
+        type="text"
+        [(ngModel)]="textInputHome"
+        />
+    <br />
+    <button (click)="updateText()">atualizar texto</button>
+    <br />
+    <p>{{textInputHome}}</p>
+</div>
