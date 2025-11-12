@@ -2,9 +2,11 @@ package com.biblio.backend.service;
 
 import com.biblio.backend.dto.response.AuthorResponse;
 import com.biblio.backend.entity.Author;
+import com.biblio.backend.exception.EntityInUseException;
 import com.biblio.backend.exception.ResourceNotFoundException;
 import com.biblio.backend.mapper.AuthorMapper;
 import com.biblio.backend.repository.AuthorRepository;
+import com.biblio.backend.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,8 +18,8 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class AuthorService {
     private final AuthorRepository repository;
+    private final BookRepository bookRepository;
     private final AuthorMapper authorMapper;
-
 
     public List<AuthorResponse> findAll(){
         return repository.findAll().stream().map(authorMapper::toResponse).toList();
@@ -50,6 +52,9 @@ public class AuthorService {
     public void delete(Long id){
         if (!repository.existsById(id)) {
             throw new ResourceNotFoundException("Author not Found: " + id);
+        }
+        if(bookRepository.countByAuthorsId(id) > 0){
+            throw new EntityInUseException("Cannot delete author with id " + id + " because it is associated with one or more books.");
         }
         repository.deleteById(id);
     }

@@ -1,11 +1,16 @@
 package com.biblio.backend.service;
 
+import com.biblio.backend.dto.request.BookFilterRequest;
 import com.biblio.backend.dto.response.BookResponse;
 import com.biblio.backend.entity.Book;
 import com.biblio.backend.exception.ResourceNotFoundException;
 import com.biblio.backend.mapper.BookMapper;
 import com.biblio.backend.repository.BookRepository;
+import com.biblio.backend.specification.BookSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,15 +23,14 @@ public class BookService {
     private final BookRepository repository;
     private final BookMapper bookMapper;
 
-    public List<BookResponse> findAll(Long categoryId, Long authorId){
-        List<Book> books;
-        if(categoryId != null) books = repository.findByCategoryId(categoryId);
-        else if(authorId != null) books = repository.findByAuthorsId(authorId);
-        else books = repository.findAll();
+    public Page<BookResponse> findAll(BookFilterRequest filter){
+        Specification<Book> spec = new BookSpecification(filter);
+        Pageable pageable = filter.toPageable();
 
-        return books.stream()
-                .map(bookMapper::toResponse)
-                .toList();
+        Page<Book> page = repository.findAll(spec, pageable);
+        return page.map(bookMapper::toResponse);
+
+
     }
 
     public BookResponse findById(Long id){

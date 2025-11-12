@@ -1,7 +1,9 @@
 package com.biblio.backend.service;
 
 import com.biblio.backend.entity.Category;
+import com.biblio.backend.exception.EntityInUseException;
 import com.biblio.backend.exception.ResourceNotFoundException;
+import com.biblio.backend.repository.BookRepository;
 import com.biblio.backend.repository.CategoryRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class CategoryService {
     private final CategoryRepository repository;
+    private final BookRepository bookRepository;
 
     public List<Category> findAll(){
         return repository.findAll();
@@ -43,6 +46,11 @@ public class CategoryService {
         if(!repository.existsById(id)){
             throw new ResourceNotFoundException("Category Not Found" + id);
         }
+
+        if(bookRepository.countByCategoryId(id) > 0){
+            throw new EntityInUseException("Cannot delete category with id " + id + " because it is associated with one or more books.");
+        }
+
         repository.deleteById(id);
     }
 }

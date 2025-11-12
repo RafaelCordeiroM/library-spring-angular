@@ -2,12 +2,15 @@ package com.biblio.backend.controller;
 
 
 
+import com.biblio.backend.dto.request.BookFilterRequest;
 import com.biblio.backend.dto.response.BookResponse;
 import com.biblio.backend.entity.Book;
 import com.biblio.backend.mapper.BookMapper;
 import com.biblio.backend.service.BookService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,10 +27,9 @@ public class BookController {
     private final BookMapper bookMapper;
 
     @GetMapping
-    public List<BookResponse> findAll(
-            @RequestParam(required = false) Long categoryId,
-            @RequestParam(required = false) Long authorId) {
-        return service.findAll(categoryId, authorId);
+    public ResponseEntity<Page<BookResponse>> findAll(BookFilterRequest filter) {
+        Page<BookResponse> page = service.findAll(filter);
+        return ResponseEntity.ok(page);
     }
 
     @GetMapping("/{id}")
