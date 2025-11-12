@@ -1,6 +1,7 @@
 package com.biblio.backend.service;
 
 import com.biblio.backend.entity.Category;
+import com.biblio.backend.exception.ResourceNotFoundException;
 import com.biblio.backend.repository.CategoryRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ public class CategoryService {
 
     public Category findById(Long id){
         return repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Category Not Found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Category Not Found: " + id));
     }
 
     @Transactional
@@ -40,7 +41,7 @@ public class CategoryService {
     @Transactional
     public void delete(Long id){
         if(!repository.existsById(id)){
-            throw new RuntimeException("Category Not Found" + id);
+            throw new ResourceNotFoundException("Category Not Found" + id);
         }
         repository.deleteById(id);
     }

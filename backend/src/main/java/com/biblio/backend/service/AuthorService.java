@@ -1,6 +1,9 @@
 package com.biblio.backend.service;
 
+import com.biblio.backend.dto.response.AuthorResponse;
 import com.biblio.backend.entity.Author;
+import com.biblio.backend.exception.ResourceNotFoundException;
+import com.biblio.backend.mapper.AuthorMapper;
 import com.biblio.backend.repository.AuthorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,14 +16,17 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class AuthorService {
     private final AuthorRepository repository;
+    private final AuthorMapper authorMapper;
 
-    public List<Author> findAll(){
-        return repository.findAll();
+
+    public List<AuthorResponse> findAll(){
+        return repository.findAll().stream().map(authorMapper::toResponse).toList();
     }
 
-    public Author findById(Long id){
-        return repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Author not Found: " + id));
+    public AuthorResponse findById(Long id){
+        Author author = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Author not Found: " + id));
+        return authorMapper.toResponse(author);
     }
 
     @Transactional
@@ -29,19 +35,21 @@ public class AuthorService {
     }
 
     @Transactional
-    public Author update(Long id, Author updated){
-        Author existing = findById(id);
+    public AuthorResponse update(Long id, Author updated){
+        Author existing = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Author not Found: " + id));
         existing.setName(updated.getName());
         existing.setNationality(updated.getNationality());
         existing.setBirthYear(updated.getBirthYear());
         existing.setBiography(updated.getBiography());
-        return repository.save(existing);
+
+        Author saved = repository.save(existing);
+        return authorMapper.toResponse(saved);
     }
 
     @Transactional
     public void delete(Long id){
         if (!repository.existsById(id)) {
-            throw new RuntimeException("Author not Found: " + id);
+            throw new ResourceNotFoundException("Author not Found: " + id);
         }
         repository.deleteById(id);
     }

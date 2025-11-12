@@ -1,5 +1,6 @@
 package com.biblio.backend.repository;
 
+import com.biblio.backend.dto.response.BookResponse;
 import com.biblio.backend.entity.Book;
 import org.springframework.data.jpa.repository.JpaRepository;
 
