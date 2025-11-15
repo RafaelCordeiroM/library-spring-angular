@@ -1,42 +1,55 @@
-// src/app/shared/components/generic-list/generic-list.component.ts
-import { Component, Inject, Input, OnInit } from '@angular/core';
+import { Component, inject, Inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { CRUD_CONFIG, CrudConfig } from '../../../core/models/crud-config.interface';
+import { MatProgressSpinner, MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatIcon, MatIconModule } from "@angular/material/icon";
+import { SearchBarComponent } from "../search-bar/search-bar.component";
+import { CommonModule } from '@angular/common';
+import { MatTableModule } from '@angular/material/table';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-generic-list',
   templateUrl: './generic-list.component.html',
-  styleUrls: ['./generic-list.component.scss']
+  styleUrls: ['./generic-list.component.scss'],
+  imports: [
+      MatProgressSpinner,
+      MatIcon, 
+      SearchBarComponent,
+      CommonModule, 
+      MatTableModule,
+      MatButtonModule,
+      MatIconModule,
+      MatProgressSpinnerModule
+  ]
 })
 export class GenericListComponent implements OnInit {
-  @Input() config!: CrudConfig;
+  config = inject<CrudConfig>(CRUD_CONFIG);
+
+  service:any = inject(this.config.service);
+
+  private router = inject(Router);
+  private toastr = inject(ToastrService);
+
   data: any[] = [];
   displayedColumns: string[] = [];
   loading = false;
 
-  constructor(
-    @Inject(CRUD_CONFIG) private crudConfig: CrudConfig,
-    private router: Router,
-    private toastr: ToastrService
-  ) {
-    this.config = crudConfig;
-  }
-
   ngOnInit() {
     this.displayedColumns = [...this.config.columns.map(c => c.key), 'actions'];
-    this.load();
+    this.loadData();
   }
 
-  load() {
+  loadData() {
     this.loading = true;
-    this.config.service.getAll().subscribe({
-      next: (data: any[]) => {
-        this.data = data;
+    this.service.getAll().subscribe({
+      next: (data: any) => {
+        this.data = data.content;
         this.loading = false;
       },
       error: () => {
-        this.toastr.error('Error loading data');
+        this.toastr.error('Failed to load data');
         this.loading = false;
       }
     });
@@ -44,25 +57,25 @@ export class GenericListComponent implements OnInit {
 
   onSearch(term: string) {
     if (!term.trim()) {
-      this.load();
+      this.loadData();
       return;
     }
-    this.config.service.search(term).subscribe((data: any[]) => this.data = data);
+    this.service.search(term).subscribe((data: any[]) => this.data = data);
   }
 
-  newNavigation() {
-    this.router.navigate([this.config.route, '']);
+  newItem() {
+    this.router.navigate([this.config.route, 'new']);
   }
 
   edit(item: any) {
     this.router.navigate([this.config.route, item.id]);
   }
 
-  remove(item: any) {
-    if (confirm(`remove ${item[this.config.displayField]}?`)) {
-      this.config.service.delete(item.id).subscribe(() => {
+  delete(item: any) {
+    if (confirm(`Delete ${item[this.config.displayField]}?`)) {
+      this.service.delete(item.id).subscribe(() => {
         this.data = this.data.filter(i => i.id !== item.id);
-        this.toastr.success('removed successfully');
+        this.toastr.success('Deleted successfully');
       });
     }
   }

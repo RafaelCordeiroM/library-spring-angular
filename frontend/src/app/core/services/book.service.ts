@@ -11,6 +11,7 @@ export class BookService {
   constructor(private http: HttpClient) {}
 
   getAll(): Observable<Book[]> {
+    alert('fetch')
     return this.http.get<Book[]>(this.apiUrl);
   }
 
@@ -18,12 +19,12 @@ export class BookService {
     return this.http.get<Book>(`${this.apiUrl}/${id}`);
   }
 
-  create(Book: Book): Observable<Book> {
-    return this.http.post<Book>(this.apiUrl, Book);
+  create(book: Book): Observable<Book> {
+    return this.http.post<Book>(this.apiUrl, book);
   }
 
-  update(id: number, Book: Partial<Book>): Observable<Book> {
-    return this.http.put<Book>(`${this.apiUrl}/${id}`, Book);
+  update(id: number, book: Partial<Book>): Observable<Book> {
+    return this.http.put<Book>(`${this.apiUrl}/${id}`, book);
   }
 
   delete(id: number): Observable<void> {

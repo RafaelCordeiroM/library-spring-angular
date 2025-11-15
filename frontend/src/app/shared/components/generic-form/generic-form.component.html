@@ -1,38 +1,44 @@
-<form [formGroup]="form" (ngSubmit)="onSubmit()" class="generic-form">
-  <div *ngFor="let field of config.fields" class="mb-3">
-    <ng-container [ngSwitch]="field.type">
-      <!-- Campo texto -->
-      <mat-form-field *ngSwitchCase="'text'" class="w-100">
-        <mat-label>{{ field.label }}</mat-label>
-        <input matInput [formControlName]="field.key" [placeholder]="field.placeholder" />
-        <mat-error *ngIf="form.get(field.key)?.invalid">{{ field.error }}</mat-error>
-      </mat-form-field>
-      <!-- Campo número -->
-      <mat-form-field *ngSwitchCase="'number'" class="w-100">
-        <mat-label>{{ field.label }}</mat-label>
-        <input matInput type="number" [formControlName]="field.key" [placeholder]="field.placeholder" />
-        <mat-error *ngIf="form.get(field.key)?.invalid">{{ field.error }}</mat-error>
-      </mat-form-field>
-      <!-- Campo seleção -->
-      <mat-form-field *ngSwitchCase="'select'" class="w-100">
-        <mat-label>{{ field.label }}</mat-label>
-        <mat-select [formControlName]="field.key">
-          <mat-option *ngFor="let option of field.options" [value]="option.value">{{ option.label }}</mat-option>
-        </mat-select>
-        <mat-error *ngIf="form.get(field.key)?.invalid">{{ field.error }}</mat-error>
-      </mat-form-field>
-      <!-- Campo data -->
-      <mat-form-field *ngSwitchCase="'date'" class="w-100">
-        <mat-label>{{ field.label }}</mat-label>
-        <input matInput [matDatepicker]="picker" [formControlName]="field.key" [placeholder]="field.placeholder" />
-        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-datepicker #picker></mat-datepicker>
-        <mat-error *ngIf="form.get(field.key)?.invalid">{{ field.error }}</mat-error>
-      </mat-form-field>
-    </ng-container>
+<div class="card">
+  <div class="card-header">
+    <h3>{{ isEdit ? 'Edit' : 'New' }} {{ config.title }}</h3>
   </div>
-  <div class="actions mt-4 text-end">
-    <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">Salvar</button>
-    <button mat-button type="button" (click)="onCancel()">Cancelar</button>
+  <div class="card-body">
+    <form [formGroup]="form" (ngSubmit)="save()">
+      <div class="row">
+        <div class="col-md-6" *ngFor="let field of config.formFields">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>{{ field.label }}</mat-label>
+
+            <input
+              *ngIf="field.type !== 'select'"
+              matInput
+              [type]="field.type"
+              [formControlName]="field.key">
+
+            <mat-select
+              *ngIf="field.type === 'select'"
+              [formControlName]="field.key"
+              [multiple]="field.key === 'authors'">
+              <mat-option *ngFor="let opt of options[field.key]" [value]="opt.value">
+                {{ opt.label }}
+              </mat-option>
+            </mat-select>
+
+            <mat-error *ngIf="form.get(field.key)?.hasError('required')">
+              {{ field.label }} is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="mt-3">
+        <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
+          Save
+        </button>
+        <button mat-button type="button" (click)="cancel()" class="ml-2">
+          Cancel
+        </button>
+      </div>
+    </form>
   </div>
-</form>
+</div>
