@@ -2,7 +2,6 @@
   <h2>{{ config.title }}</h2>
   <button mat-raised-button color="primary" (click)="newItem()">+ {{ config.newLabel }}</button>
 </div>
-
 <app-search-bar (search)="onSearch($event)"></app-search-bar>
 <table mat-table [dataSource]="data" class="mat-elevation-z2 w-100">
 

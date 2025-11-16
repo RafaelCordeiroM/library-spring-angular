@@ -48,6 +48,7 @@ export const BOOKS_CONFIG: CrudConfig = {
       label: 'Authors',
       type: 'select',
       required: true,
+      multiple: true,
       optionsService: AuthorService,
       optionLabel: 'name',
       // Multiple selection will be handled in form (see note below)

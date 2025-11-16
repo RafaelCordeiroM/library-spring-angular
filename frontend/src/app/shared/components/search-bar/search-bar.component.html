@@ -1,5 +1,11 @@
-    <mat-form-field appearance="outline" class="w-100 mb-3">
-      <mat-label>Search...</mat-label>
-      <input matInput placeholder="Type to search">
-      <mat-icon matSuffix>search</mat-icon>
-    </mat-form-field>
+<mat-form-field appearance="outline" class="w-100 mb-3">
+  <mat-label>Search...</mat-label>
+  <input
+    matInput
+    #searchInput
+    placeholder="Type to search"
+    [(ngModel)]="searchTerm"
+    (input)="onInput(searchInput.value)"
+    autocomplete="off">
+  <mat-icon matSuffix>search</mat-icon>
+</mat-form-field>

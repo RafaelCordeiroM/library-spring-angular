@@ -13,6 +13,7 @@ export interface FormField {
   required?: boolean;
   optionsService?: any;
   optionLabel?: string;
+  multiple?: boolean;
   options?: { value: any; label: string }[];
 }
 

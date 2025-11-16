@@ -11,7 +11,6 @@ export class BookService {
   constructor(private http: HttpClient) {}
 
   getAll(): Observable<Book[]> {
-    alert('fetch')
     return this.http.get<Book[]>(this.apiUrl);
   }
 
@@ -32,6 +31,6 @@ export class BookService {
   }
 
   search(term: string): Observable<Book[]> {
-    return this.http.get<Book[]>(`${this.apiUrl}?q=${encodeURIComponent(term)}`);
+    return this.http.get<Book[]>(`${this.apiUrl}?title=${encodeURIComponent(term)}`);
   }
 }

@@ -60,7 +60,7 @@ export class GenericListComponent implements OnInit {
       this.loadData();
       return;
     }
-    this.service.search(term).subscribe((data: any[]) => this.data = data);
+    this.service.search(term).subscribe((data: any) => this.data = data.content);
   }
 
   newItem() {

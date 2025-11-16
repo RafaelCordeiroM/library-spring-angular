@@ -9,12 +9,15 @@
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>{{ field.label }}</mat-label>
 
+            <!-- INPUT -->
             <input
               *ngIf="field.type !== 'select'"
               matInput
               [type]="field.type"
-              [formControlName]="field.key">
+              [formControlName]="field.key"
+              [required]="field.required || false" />
 
+            <!-- SELECT -->
             <mat-select
               *ngIf="field.type === 'select'"
               [formControlName]="field.key"
@@ -24,7 +27,8 @@
               </mat-option>
             </mat-select>
 
-            <mat-error *ngIf="form.get(field.key)?.hasError('required')">
+            <!-- ERRO -->
+            <mat-error *ngIf="form.get(field.key)?.touched && form.get(field.key)?.hasError('required')">
               {{ field.label }} is required
             </mat-error>
           </mat-form-field>

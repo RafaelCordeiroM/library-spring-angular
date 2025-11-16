@@ -1,1 +1,11 @@
-<app-generic-list></app-generic-list>
+<div class="books-container">
+  <ng-container [ngSwitch]="mode">
+    <!-- LISTA -->
+    <app-generic-list *ngSwitchCase="'list'">
+    </app-generic-list>
+
+    <!-- FORMULÁRIO -->
+    <app-generic-form *ngSwitchCase="'form'">
+    </app-generic-form>
+  </ng-container>
+</div>
