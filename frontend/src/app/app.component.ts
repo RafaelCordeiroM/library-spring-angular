@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { SidebarComponent } from './layout/sidebar/sidebar.component';
-import { CRUD_CONFIG } from './core/models/crud-config.interface';
+import { ToastContainerDirective } from 'ngx-toastr';
+
 
 @Component({
   selector: 'app-root',
-  imports: [SidebarComponent, RouterOutlet],
+  imports: [SidebarComponent, RouterOutlet, ToastContainerDirective],
   standalone: true,
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',

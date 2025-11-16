@@ -1,5 +1,5 @@
 // generic-form.component.ts
-import { Component, inject, Injector, OnInit } from '@angular/core';
+import { Component, inject, Injector, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -35,6 +35,8 @@ export class GenericFormComponent implements OnInit {
   private toastr = inject(ToastrService);
   private injector = inject(Injector);
 
+  @Input() entityId: string | null = null;
+
   form!: FormGroup;
   isEdit = false;
   options: Record<string, { value: any; label: string }[]> = {};
@@ -42,8 +44,7 @@ export class GenericFormComponent implements OnInit {
   ngOnInit() {
     this.buildForm();
     this.loadSelectOptions();
-    this.loadDataIfEdit();
-  }
+    this.loadDataIfEdit();  }
 
   ngOnDestroy() {
     this.subs.unsubscribe();
@@ -86,7 +87,9 @@ private loadSelectOptions() {
 }
 
 private loadDataIfEdit() {
-  const id = this.route.snapshot.paramMap.get('id');
+  const id = this.entityId
+
+  console.log('route', id)
   if (!id) return;
 
   this.isEdit = true;
@@ -134,7 +137,7 @@ save() {
   const rawValue = this.form.value;
   const payload = this.transformPayload(rawValue);
 
-  const id = this.route.snapshot.paramMap.get('id');
+  const id = this.entityId
   const obs = this.isEdit
     ? this.service.update(+id!, payload)
     : this.service.create(payload);

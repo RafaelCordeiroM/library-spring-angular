@@ -1,11 +1,16 @@
 <div class="books-container">
   <ng-container [ngSwitch]="mode">
-    <!-- LISTA -->
-    <app-generic-list *ngSwitchCase="'list'">
-    </app-generic-list>
-
-    <!-- FORMULÁRIO -->
-    <app-generic-form *ngSwitchCase="'form'">
+    <!-- LIST -->
+    <app-generic-list 
+    *ngSwitchCase="'list'"
+    >
+  </app-generic-list>
+  
+  <!-- FORM -->
+  <app-generic-form 
+  *ngSwitchCase="'form'"
+  [entityId]="bookId"
+    >
     </app-generic-form>
   </ng-container>
 </div>
